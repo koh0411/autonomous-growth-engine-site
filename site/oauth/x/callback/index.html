@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'sha256-eKMD472R06fbzLz4rckgTM5oYIGzPFgPCn5jzUOgJxc='; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex">
+  <meta name="description" content="OAuth callback for Autonomous Growth Engine. Displays the authorization result for the owner to copy.">
+  <title>X Authorization Callback | Autonomous Growth Engine</title>
+  <link rel="stylesheet" href="../../../styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../../../" aria-label="Autonomous Growth Engine home">Autonomous Growth Engine</a>
+    <nav aria-label="Primary navigation">
+      <a href="../../../privacy/">Privacy Policy</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="card" aria-labelledby="page-title">
+      <p class="eyebrow">Authorization callback</p>
+      <h1 id="page-title">X authorization result</h1>
+      <p>This page only displays the authorization code and state returned in its address. It does not exchange tokens, store data, or send anything to any server.</p>
+
+      <div id="result-panel" hidden>
+        <p>Copy these values into the local command line. The code is single-use and expires quickly.</p>
+        <label for="code-value">Authorization code</label>
+        <input id="code-value" class="callback-value" type="text" readonly autocomplete="off" spellcheck="false">
+        <label for="state-value">State</label>
+        <input id="state-value" class="callback-value" type="text" readonly autocomplete="off" spellcheck="false">
+        <label for="command-value">Local command</label>
+        <input id="command-value" class="callback-value" type="text" readonly autocomplete="off" spellcheck="false">
+      </div>
+
+      <div id="error-panel" hidden>
+        <p>Authorization was not completed. Error: <code id="error-value"></code></p>
+      </div>
+
+      <div id="empty-panel" hidden>
+        <p>No authorization result was found in the address. Start the connection from the local command line.</p>
+      </div>
+
+      <noscript><p>JavaScript is required to display the authorization result.</p></noscript>
+    </section>
+  </main>
+
+  <footer>
+    <p>Independent personal-use project. No affiliation with or endorsement by any connected platform is claimed.</p>
+  </footer>
+  <script>(function () {
+  var params = new URLSearchParams(window.location.search);
+  var code = params.get("code") || "";
+  var state = params.get("state") || "";
+  var error = params.get("error") || "";
+  var clean = function (value) { return value.replace(/[^A-Za-z0-9._~-]/g, "").slice(0, 512); };
+  var show = function (id) { document.getElementById(id).hidden = false; };
+  // Keep the one-time code out of browser history; this page sends nothing anywhere.
+  if (window.location.search && window.history && window.history.replaceState) window.history.replaceState(null, "", window.location.pathname);
+  if (error) {
+    document.getElementById("error-value").textContent = clean(error);
+    show("error-panel");
+  } else if (code && state) {
+    document.getElementById("code-value").value = clean(code);
+    document.getElementById("state-value").value = clean(state);
+    document.getElementById("command-value").value = "node src/x-cli.mjs auth-exchange --code '" + clean(code) + "' --state '" + clean(state) + "'";
+    show("result-panel");
+  } else {
+    show("empty-panel");
+  }
+})();</script>
+</body>
+</html>
