@@ -153,3 +153,16 @@ footer {
     border-radius: 0.75rem;
   }
 }
+
+.callback-value {
+  display: block;
+  width: 100%;
+  margin: 0.25rem 0 1rem;
+  padding: 0.5rem 0.65rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  color: var(--text);
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+}
